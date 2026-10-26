@@ -8,7 +8,7 @@
 
 /var/www/html
 
-3- سپس در محیط کنسول ایزایب دستورات زیر به به ترتیب وارد کنید :
+3- سپس در محیط کنسول ایزابل دستورات زیر به به ترتیب وارد کنید :
 
 chown -R asterisk:asterisk /var/www/html/modules/dashboard/applets/IssabelStats/
 
