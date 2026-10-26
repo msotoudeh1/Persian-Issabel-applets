@@ -1,4 +1,5 @@
 درود . 
+
 1- به مسیر /var/www/html/modules/dashboard/applets/
 
 در ایزابل رفته دو پوشه IssabelClock و  IssabelStats به طور کامل به پوشه applets منتقل کنید .
