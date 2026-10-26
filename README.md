@@ -33,7 +33,6 @@ rm -rf /var/www/html/var/templates_c/*
 
 <img width="1198" height="426" alt="Screenshot 2026-10-26 163213" src="https://github.com/user-attachments/assets/ee2732fa-fa86-4c76-a801-61802d75b3d9" />
 
-<img width="1183" height="513" alt="Screenshot 2026-10-26 163228" src="https://github.com/user-attachments/assets/3f184827-bf72-41cb-95d0-f3eec6c76726" />
 
 <img width="1117" height="503" alt="Screenshot 2026-10-26 163238" src="https://github.com/user-attachments/assets/7c73a03c-b3a7-4a81-8764-4358eaa4271e" />
 
