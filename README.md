@@ -23,7 +23,8 @@ sqlite3 /var/www/db/dashboard.db "INSERT INTO applet (code, name, icon) VALUES (
 sqlite3 /var/www/db/dashboard.db "INSERT INTO default_applet_by_user (id_applet, username) SELECT id, 'admin' FROM applet WHERE code='Applet_IssabelClock';"
 
 
-در نهایت برای پاک کردن کش ایزابل این دستور ا وارد کنید :
+در نهایت برای پاک کردن کش ایزابل این دستور را وارد کنید :
+
 rm -rf /var/www/html/var/templates_c/*
 
 به محیط ایزابل لاگین کرده و در بخش مدیرت میزکار و یا applet-admin دو گزینه آمار داخلی و ترانک و تاریخ و ساعت را تیک زده و در نهایت ذخیره کنید
