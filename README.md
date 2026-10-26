@@ -1,9 +1,13 @@
 درود . 
-به مسیر /var/www/html/modules/dashboard/applets/
+1- به مسیر /var/www/html/modules/dashboard/applets/
 
-در ایزابل رفته و دو پوشه IssabelClock و  IssabelStats به طور کامل به پوشه applets منتقل کنید .
+در ایزابل رفته دو پوشه IssabelClock و  IssabelStats به طور کامل به پوشه applets منتقل کنید .
 
-سپس در محیط کنسول ایزایب دستورات زیر به به ترتیب وارد کنید :
+2- فایلهای موجود در پوشه file رابه پوشه html در ایزابل منتقل کنید :
+
+/var/www/html
+
+3- سپس در محیط کنسول ایزایب دستورات زیر به به ترتیب وارد کنید :
 
 chown -R asterisk:asterisk /var/www/html/modules/dashboard/applets/IssabelStats/
 
