@@ -9,15 +9,15 @@
 /var/www/html
 
 3- سپس در محیط کنسول ایزابل دستورات زیر به به ترتیب وارد کنید :
-1-
 
 chown -R asterisk:asterisk /var/www/html/modules/dashboard/applets/IssabelStats/
 
-2-
+
 
 chmod -R 755 /var/www/html/modules/dashboard/applets/IssabelStats/
 
 sqlite3 /var/www/db/dashboard.db "INSERT INTO applet (code, name, icon) VALUES ('Applet_IssabelStats', 'آمار داخلی و ترانک', 'stats.png');"
+
 
 sqlite3 /var/www/db/dashboard.db "INSERT INTO default_applet_by_user (id_applet, username) SELECT id, 'admin' FROM applet WHERE code='Applet_IssabelStats';"
 
@@ -28,7 +28,9 @@ chmod -R 755 /var/www/html/modules/dashboard/applets/IssabelClock/
 
 sqlite3 /var/www/db/dashboard.db "INSERT INTO applet (code, name, icon) VALUES ('Applet_IssabelClock', 'تاریخ و ساعت', 'clock.png');"
 
+
 sqlite3 /var/www/db/dashboard.db "INSERT INTO default_applet_by_user (id_applet, username) SELECT id, 'admin' FROM applet WHERE code='Applet_IssabelClock';"
+
 
 
 در نهایت برای پاک کردن کش ایزابل این دستور را وارد کنید :
