@@ -24,11 +24,26 @@ class Applet_IssabelStats
         $peers_data = $this->getSipPeers();
         $queue_data = $this->getQueueStatus();
         $channel_data = $this->getActiveChannels();
-        $cdr_stats = $this->getTodayCDRStats();
         
-        // داده‌های جدید برای نمودارها
-        $traffic_data = $this->getTrafficChartData();
-        $top_exts = $this->getTopExtensions();
+        // دریافت آمار برای هر سه دوره (روز، ماه، سال)
+        $cdr_day = $this->getCDRStats('day');
+        $cdr_month = $this->getCDRStats('month');
+        $cdr_year = $this->getCDRStats('year');
+
+        $traffic_day = $this->getTrafficChartData('day');
+        $traffic_month = $this->getTrafficChartData('month');
+        $traffic_year = $this->getTrafficChartData('year');
+
+        $top_day = $this->getTopExtensions('day');
+        $top_month = $this->getTopExtensions('month');
+        $top_year = $this->getTopExtensions('year');
+
+        // بسته‌بندی داده‌ها برای ارسال به جاوااسکریپت
+        $period_data = array(
+            'day' => array('stats' => $cdr_day, 'traffic' => $traffic_day, 'top' => $top_day),
+            'month' => array('stats' => $cdr_month, 'traffic' => $traffic_month, 'top' => $top_month),
+            'year' => array('stats' => $cdr_year, 'traffic' => $traffic_year, 'top' => $top_year)
+        );
 
         $ext_total = count($peers_data['extensions']);
         $ext_online = 0;
@@ -58,100 +73,75 @@ class Applet_IssabelStats
             'queue_waiting' => $queue_data['waiting'],
             'active_calls' => $channel_data['calls'],
             'active_channels' => $channel_data['channels'],
-            'cdr_total_calls' => $cdr_stats['total'],
-            'cdr_answered' => $cdr_stats['answered'],
-            'cdr_failed' => $cdr_stats['failed'],
-            'cdr_avg_duration' => $cdr_stats['avg_duration'],
-            'traffic_data' => json_encode($traffic_data),
-            'top_extensions' => $top_exts
+            
+            // داده‌های پیش‌فرض (امروز) برای نمایش در خلاصه
+            'cdr_total_calls' => $cdr_day['total'],
+            'cdr_answered' => $cdr_day['answered'],
+            'cdr_failed' => $cdr_day['failed'],
+            'cdr_avg_duration' => $cdr_day['avg_duration'],
+            
+            // دیتای کامل سه دوره به صورت JSON برای استفاده در مودال
+            'period_data_json' => json_encode($period_data, JSON_UNESCAPED_UNICODE)
         );
     }
 
-    // --- تابع اصلاح شده برای تشخیص دقیق ترانک‌ها و داخلی‌ها ---
     private function getSipPeers() {
         $extensions = array(); $trunks = array();
         $db_trunks = array();
 
-        // 1. خواندن لیست دقیق ترانک‌ها از دیتابیس
         try {
             $pdo = new PDO('mysql:host=localhost;dbname=asterisk;charset=utf8', 'asteriskuser', '123tosan8661');
             $stmt = $pdo->query("SELECT name, tech, channelid FROM trunks");
             while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
                 $trunk_name = trim(!empty($row['channelid']) ? $row['channelid'] : $row['name']);
-                $db_trunks[$trunk_name] = array(
-                    'tech' => strtoupper($row['tech']),
-                    'status' => 'UNKNOWN'
-                );
+                $db_trunks[$trunk_name] = array('tech' => strtoupper($row['tech']), 'status' => 'UNKNOWN');
             }
         } catch (PDOException $e) { }
 
-        // 2. گرفتن خروجی‌های استریسک
         $sip_out = array(); @exec('/usr/sbin/asterisk -rx "sip show peers" 2>/dev/null', $sip_out);
         $pjsip_out = array(); @exec('/usr/sbin/asterisk -rx "pjsip show endpoints" 2>/dev/null', $pjsip_out);
 
-        // 3. پردازش خروجی SIP (تشخیص دقیق ترانک‌ها و داخلی‌ها)
         foreach ($sip_out as $line) {
             $line = trim($line);
             if (empty($line) || stripos($line, 'Name/username') === 0 || stripos($line, 'sip peers') !== false || stripos($line, 'objects found') !== false) continue;
-
             $parts = preg_split('/\s+/', $line);
             if (count($parts) < 1) continue;
-
             $raw_name = $parts[0];
-            $name = explode('/', $raw_name)[0]; // حذف /username برای تطبیق بهتر
-
-            // استخراج وضعیت
+            $name = explode('/', $raw_name)[0];
             $status = 'UNKNOWN';
-            if (preg_match('/\s(OK|UNREACHABLE|LAGGED)\b/i', $line, $sm)) {
-                $status = strtoupper($sm[1]);
-            }
-
+            if (preg_match('/\s(OK|UNREACHABLE|LAGGED)\b/i', $line, $sm)) $status = strtoupper($sm[1]);
+            
             if (array_key_exists($name, $db_trunks)) {
-                $db_trunks[$name]['status'] = $status; // اگر در دیتابیس بود = ترانک
+                $db_trunks[$name]['status'] = $status;
             } else {
-                $extensions[] = array('name' => $name, 'status' => $status, 'host' => 'SIP'); // در غیر این صورت = داخلی
+                $extensions[] = array('name' => $name, 'status' => $status, 'host' => 'SIP');
             }
         }
 
-        // 4. پردازش ترانک‌های PJSIP (اگر وجود داشته باشد)
         foreach ($db_trunks as $name => $info) {
             if ($info['tech'] === 'PJSIP') {
                 foreach ($pjsip_out as $line) {
                     if (stripos($line, 'Endpoint: ' . $name) !== false) {
-                        if (stripos($line, 'Unavailable') !== false || stripos($line, 'Unknown') !== false) {
-                            $db_trunks[$name]['status'] = 'UNREACHABLE';
-                        } else {
-                            $db_trunks[$name]['status'] = 'OK';
-                        }
+                        $db_trunks[$name]['status'] = (stripos($line, 'Unavailable') !== false || stripos($line, 'Unknown') !== false) ? 'UNREACHABLE' : 'OK';
                     }
                 }
             }
         }
 
-        // 5. آماده‌سازی نهایی لیست ترانک‌ها
         foreach ($db_trunks as $name => $info) {
-            $trunks[] = array(
-                'name' => $name,
-                'status' => $info['status'],
-                'host' => $info['tech']
-            );
+            $trunks[] = array('name' => $name, 'status' => $info['status'], 'host' => $info['tech']);
         }
 
-        // 6. پردازش داخلی‌های PJSIP
         foreach ($pjsip_out as $line) {
             if (preg_match('/Endpoint:\s+([^\s]+)/', $line, $pm)) {
                 $name = $pm[1];
                 if ($name === 'dummy_endpoint' || array_key_exists($name, $db_trunks)) continue;
-
                 $status = (stripos($line, 'Unavailable') !== false || stripos($line, 'Unknown') !== false) ? 'UNREACHABLE' : 'OK';
                 $exists = false;
                 foreach ($extensions as $e) { if ($e['name'] === $name) $exists = true; }
-                if (!$exists) {
-                    $extensions[] = array('name' => $name, 'status' => $status, 'host' => 'PJSIP');
-                }
+                if (!$exists) $extensions[] = array('name' => $name, 'status' => $status, 'host' => 'PJSIP');
             }
         }
-
         return array('extensions' => $extensions, 'trunks' => $trunks, 'asterisk_ok' => !empty($sip_out) || !empty($pjsip_out));
     }
 
@@ -178,18 +168,22 @@ class Applet_IssabelStats
         return array('calls' => $calls, 'channels' => $channels);
     }
 
-    // --- تابع اصلاح شده با رمز صحیح دیتابیس ---
-    private function getTodayCDRStats() {
+    // تابع اصلاح شده برای دریافت آمار بر اساس دوره
+    private function getCDRStats($period) {
         $stats = array('total' => 0, 'answered' => 0, 'failed' => 0, 'avg_duration' => 0);
         try {
             $pdo = new PDO('mysql:host=localhost;dbname=asteriskcdrdb;charset=utf8', 'asteriskuser', '123tosan8661');
             $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
             
+            $where = "DATE(calldate) = CURDATE()";
+            if ($period == 'month') $where = "MONTH(calldate) = MONTH(CURDATE()) AND YEAR(calldate) = YEAR(CURDATE())";
+            if ($period == 'year') $where = "YEAR(calldate) = YEAR(CURDATE())";
+
             $sql = "SELECT COUNT(*) as total, 
                     SUM(CASE WHEN disposition = 'ANSWERED' THEN 1 ELSE 0 END) as answered, 
                     SUM(CASE WHEN disposition IN ('BUSY', 'FAILED', 'NO ANSWER') THEN 1 ELSE 0 END) as failed, 
                     AVG(CASE WHEN disposition = 'ANSWERED' THEN duration ELSE NULL END) as avg_duration 
-                    FROM cdr WHERE DATE(calldate) = CURDATE()";
+                    FROM cdr WHERE $where";
                     
             $stmt = $pdo->query($sql);
             $row = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -199,50 +193,64 @@ class Applet_IssabelStats
                 $stats['failed'] = (int)$row['failed']; 
                 $stats['avg_duration'] = round((float)$row['avg_duration']);
             }
-        } catch (PDOException $e) { 
-            error_log("Issabel CDR Error: " . $e->getMessage()); 
-        }
+        } catch (PDOException $e) { }
         return $stats;
     }
 
-    private function getTrafficChartData() {
-        $data = array_fill(0, 24, array('inbound' => 0, 'outbound' => 0));
+    // تابع اصلاح شده برای نمودار
+    private function getTrafficChartData($period) {
+        if ($period == 'day') $data = array_fill(0, 24, array('inbound' => 0, 'outbound' => 0));
+        elseif ($period == 'month') $data = array_fill(0, 31, array('inbound' => 0, 'outbound' => 0));
+        else $data = array_fill(0, 12, array('inbound' => 0, 'outbound' => 0));
+        
         try {
             $pdo = new PDO('mysql:host=localhost;dbname=asteriskcdrdb;charset=utf8', 'asteriskuser', '123tosan8661');
             
-            // آپدیت بر اساس کانتکست‌های دقیق سیستم شما (شامل ivr-2 و from-did-direct)
-            $sql = "SELECT HOUR(calldate) as hour, 
-                    SUM(CASE 
-                        WHEN dcontext LIKE 'from-did%' 
-                          OR dcontext LIKE 'ivr-%' 
-                          OR dcontext LIKE 'from-trunk%' 
-                          OR dcontext LIKE 'from-pstn%' 
-                        THEN 1 ELSE 0 END) as inbound,
-                    SUM(CASE 
-                        WHEN dcontext LIKE 'from-internal%' 
-                        THEN 1 ELSE 0 END) as outbound
-                    FROM cdr 
-                    WHERE DATE(calldate) = CURDATE() 
-                    GROUP BY HOUR(calldate)";
+            $groupBy = 'HOUR(calldate)';
+            $where = "DATE(calldate) = CURDATE()";
+            $offset = 0;
+
+            if ($period == 'month') {
+                $groupBy = 'DAY(calldate)';
+                $where = "MONTH(calldate) = MONTH(CURDATE()) AND YEAR(calldate) = YEAR(CURDATE())";
+                $offset = 1;
+            }
+            if ($period == 'year') {
+                $groupBy = 'MONTH(calldate)';
+                $where = "YEAR(calldate) = YEAR(CURDATE())";
+                $offset = 1;
+            }
+
+            $sql = "SELECT $groupBy as t, 
+                    SUM(CASE WHEN dcontext LIKE 'from-did%' OR dcontext LIKE 'ivr-%' OR dcontext LIKE 'from-trunk%' OR dcontext LIKE 'from-pstn%' THEN 1 ELSE 0 END) as inbound,
+                    SUM(CASE WHEN dcontext LIKE 'from-internal%' THEN 1 ELSE 0 END) as outbound
+                    FROM cdr WHERE $where GROUP BY $groupBy";
                     
             $stmt = $pdo->query($sql);
             while($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-                $h = (int)$row['hour'];
-                $data[$h]['inbound'] = (int)$row['inbound'];
-                $data[$h]['outbound'] = (int)$row['outbound'];
+                $h = (int)$row['t'] - $offset;
+                if(isset($data[$h])) {
+                    $data[$h]['inbound'] = (int)$row['inbound'];
+                    $data[$h]['outbound'] = (int)$row['outbound'];
+                }
             }
         } catch (PDOException $e) {}
         return $data;
     }
 
-    // --- تابع جدید برای پرتماس‌ترین داخلی‌ها ---
-    private function getTopExtensions() {
+    // تابع اصلاح شده برای جدول
+    private function getTopExtensions($period) {
         $top = array();
         try {
             $pdo = new PDO('mysql:host=localhost;dbname=asteriskcdrdb;charset=utf8', 'asteriskuser', '123tosan8661');
+            
+            $where = "DATE(calldate) = CURDATE()";
+            if ($period == 'month') $where = "MONTH(calldate) = MONTH(CURDATE()) AND YEAR(calldate) = YEAR(CURDATE())";
+            if ($period == 'year') $where = "YEAR(calldate) = YEAR(CURDATE())";
+
             $sql = "SELECT src as ext, COUNT(*) as call_count, SUM(billsec) as talk_time 
                     FROM cdr 
-                    WHERE DATE(calldate) = CURDATE() AND dcontext LIKE 'from-internal%' AND LENGTH(src) <= 5
+                    WHERE $where AND dcontext LIKE 'from-internal%' AND LENGTH(src) <= 5
                     GROUP BY src ORDER BY call_count DESC LIMIT 5";
             $stmt = $pdo->query($sql);
             while($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
@@ -252,7 +260,6 @@ class Applet_IssabelStats
         return $top;
     }
 
-    // --- تابع تبدیل تاریخ میلادی به شمسی ---
     private function getJalaliDate() {
         $gy = date('Y'); $gm = date('m'); $gd = date('d');
         $g_d_m = array(0,31,59,90,120,151,181,212,243,273,304,334);
