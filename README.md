@@ -13,6 +13,12 @@
 /var/www/html
 ```
 3- سپس در محیط کنسول ایزابل دستورات زیر به به ترتیب وارد کنید :
+نمایش امار بر مبنای روز و ماه و سال
+
+```
+<img width="1246" height="520" alt="image" src="https://github.com/user-attachments/assets/9e369e40-afcf-4e67-b1cb-cdf4bd3f197f" />
+```
+
 ```
 chown -R asterisk:asterisk /var/www/html/modules/dashboard/applets/IssabelStats/
 ```
