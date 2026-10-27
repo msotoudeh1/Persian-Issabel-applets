@@ -1,22 +1,35 @@
 <link href="Vazirmatn-font-face.css" rel="stylesheet" type="text/css" />
-<script src="3.4.17.js"></script>
-<div dir="rtl" style="font-family: 'Vazirmatn', Tahoma, sans-serif; padding: 5px;">
-    
-    <!-- کارت تاریخ شمسی -->
-    <div style="background-color: #ffffff !important; border: 1px solid #e2e8f0; border-radius: 12px; padding: 15px; text-align: center; margin-bottom: 10px; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
-        <div style="color: #64748b; font-size: 13px; margin-bottom: 5px; font-weight: 600;">📅 تاریخ امروز</div>
-        <div style="color: #1e293b; font-size: 20px; font-weight: 800; letter-spacing: 1px;">{$date_jalali}</div>
-    </div>
+<script src="https://3.4.17.js"></script>
+<script>tailwind.config = { theme: { extend: { fontFamily: { vazir: ['Vazirmatn', 'sans-serif'] } } } }</script>
 
-    <!-- کارت ساعت زنده (با استایل خطی برای جلوگیری از تداخل) -->
-    <div style="background: linear-gradient(135deg, #1e293b, #0f172a) !important; border-radius: 12px; padding: 15px; text-align: center; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
-        <div style="color: #94a3b8; font-size: 13px; margin-bottom: 5px; font-weight: 600;">⏰ ساعت سیستم</div>
-        <div id="live-clock" style="color: #ffffff !important; font-size: 32px; font-weight: bold; font-family: monospace; letter-spacing: 2px;" dir="ltr">00:00:00</div>
+<div dir="rtl" class="font-vazir text-slate-800" style="padding: 15px; width: 100%; box-sizing: border-box;">
+    <!-- ارتفاع ثابت 260 پیکسل -->
+    <div class="bg-white rounded-2xl shadow-md overflow-hidden border border-gray-100 flex flex-col" style="height: 260px; width: 100%; box-sizing: border-box;">
+        
+        <!-- بخش بالایی: تاریخ -->
+        <div class="flex-1 bg-slate-50 flex flex-col justify-center items-center p-4 border-b border-gray-200 relative overflow-hidden">
+            <div class="absolute -top-6 -right-6 w-20 h-20 bg-blue-100 rounded-full mix-blend-multiply filter blur-xl opacity-70"></div>
+            
+            <div class="text-gray-500 text-sm mb-2 flex items-center gap-1.5 font-medium z-10">
+                <svg class="w-4 h-4 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                تاریخ امروز
+            </div>
+            <div class="text-3xl font-extrabold text-slate-700 tracking-wide z-10">{$date_jalali}</div>
+        </div>
+
+        <!-- بخش پایینی: ساعت -->
+        <div class="flex-1 bg-gradient-to-br from-slate-800 to-slate-900 flex flex-col justify-center items-center p-4 relative">
+            <div class="text-slate-400 text-sm mb-2 flex items-center gap-1.5 font-medium">
+                <svg class="w-4 h-4 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                ساعت سیستم
+            </div>
+            <div id="live-clock" class="text-4xl font-mono font-bold text-emerald-400 tracking-widest drop-shadow-md" dir="ltr">00:00:00</div>
+        </div>
+
     </div>
 </div>
 
 <script>
-    // استفاده از setInterval برای به‌روزرسانی مداوم بدون نیاز به لود مجدد
     if (typeof window.issabelClockInterval !== 'undefined') {
         clearInterval(window.issabelClockInterval);
     }

@@ -3,171 +3,165 @@
 <head>
     <meta charset="utf-8">
     <title>داشبورد جامع</title>
-    <!-- لود فونت وزیرمتن -->
     <link href="Vazirmatn-font-face.css" rel="stylesheet" type="text/css" />
-    <!-- لود Tailwind CSS -->
     <script src="3.4.17.js"></script>
-	<script src="chart.js"></script>
-    <!-- تنظیم فونت پیش‌فرض در Tailwind -->
+    <script src="chart.js"></script>
     <script>
       tailwind.config = {
         theme: {
           extend: {
             fontFamily: { vazir: ['Vazirmatn', 'sans-serif'] },
-            colors: { issabel: '#2c3e50' }
+            colors: { darkbg: '#0f172a', cardbg: '#1e293b', cardborder: '#334155' }
           }
         }
       }
     </script>
+    <style>
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: #0f172a; }
+        ::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #475569; }
+    </style>
 </head>
-<body class="font-vazir bg-slate-50 min-h-screen p-6 text-slate-800">
+<body class="font-vazir bg-darkbg min-h-screen p-6 text-slate-200 overflow-y-auto">
 
     <!-- هدر صفحه -->
-    <div class="flex flex-wrap justify-between items-center bg-white p-4 rounded-2xl shadow-sm border border-slate-200 mb-6">
-        <h1 class="text-xl font-bold text-slate-700 flex items-center gap-2">
-            <span class="text-2xl">📊</span> داشبورد جامع سیستم
-        </h1>
-        <div class="bg-slate-100 text-slate-600 px-4 py-1.5 rounded-full text-sm font-medium mt-2 sm:mt-0 flex items-center gap-2">
-            <span>📅 امروز: {$date_jalali}</span>
-            <span class="text-slate-300">|</span>
-            <span>⏰ ساعت: {$time}</span>
+    <div class="flex flex-wrap justify-between items-center bg-cardbg p-5 rounded-2xl shadow-lg border border-cardborder mb-6">
+        <div class="flex items-center gap-3">
+            <div class="bg-blue-500/20 p-2 rounded-xl border border-blue-500/30">
+                <svg class="w-6 h-6 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
+            </div>
+            <h1 class="text-xl font-bold text-white">داشبورد جامع سیستم تلفنی</h1>
+        </div>
+        <div class="bg-slate-800 text-slate-300 px-5 py-2 rounded-full text-sm font-medium mt-2 sm:mt-0 flex items-center gap-3 border border-slate-700">
+            <span class="flex items-center gap-1.5">
+                <svg class="w-4 h-4 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                {$date_jalali}
+            </span>
+            <span class="text-slate-600">|</span>
+            <span class="flex items-center gap-1.5 font-mono text-blue-400" dir="ltr">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                {$time}
+            </span>
         </div>
     </div>
 
-    <!-- کارت‌های اصلی (ریسپانسیو) -->
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-        <!-- کارت داخلی‌ها -->
-        <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 text-center hover:shadow-md transition-shadow">
-            <h3 class="text-slate-500 text-sm font-semibold mb-2">📞 داخلی‌ها</h3>
-            <div class="text-4xl font-extrabold text-slate-800 mb-2">{$ext_total}</div>
-            <div class="flex justify-center gap-3 text-sm">
-                <span class="text-emerald-500 font-medium">✓ {$ext_online} آنلاین</span>
-                <span class="text-rose-500 font-medium">✗ {$ext_offline} آفلاین</span>
+    <!-- کارت‌های اصلی -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 mb-6">
+        <!-- داخلی‌ها -->
+        <div class="bg-cardbg p-6 rounded-2xl shadow-lg border border-cardborder relative overflow-hidden group hover:border-blue-500/50 transition-colors">
+            <div class="absolute -top-10 -right-10 w-32 h-32 bg-blue-500 rounded-full mix-blend-multiply filter blur-3xl opacity-20 group-hover:opacity-40 transition-opacity"></div>
+            <h3 class="text-slate-400 text-sm font-semibold mb-2 relative z-10">📞 داخلی‌ها</h3>
+            <div class="text-5xl font-extrabold text-white mb-4 relative z-10">{$ext_total}</div>
+            <div class="flex gap-4 text-xs font-medium relative z-10">
+                <span class="flex items-center gap-1 text-emerald-400"><span class="w-2 h-2 rounded-full bg-emerald-400"></span> {$ext_online} آنلاین</span>
+                <span class="flex items-center gap-1 text-rose-400"><span class="w-2 h-2 rounded-full bg-rose-400"></span> {$ext_offline} آفلاین</span>
             </div>
         </div>
 
-        <!-- کارت ترانک‌ها -->
-        <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 text-center hover:shadow-md transition-shadow">
-            <h3 class="text-slate-500 text-sm font-semibold mb-2">🔌 ترانک‌ها</h3>
-            <div class="text-4xl font-extrabold text-slate-800 mb-2">{$trunk_total}</div>
-            <div class="flex justify-center gap-3 text-sm">
-                <span class="text-emerald-500 font-medium">✓ {$trunk_online} فعال</span>
-                <span class="text-rose-500 font-medium">✗ {$trunk_offline} قطع</span>
+        <!-- ترانک‌ها -->
+        <div class="bg-cardbg p-6 rounded-2xl shadow-lg border border-cardborder relative overflow-hidden group hover:border-indigo-500/50 transition-colors">
+            <div class="absolute -top-10 -right-10 w-32 h-32 bg-indigo-500 rounded-full mix-blend-multiply filter blur-3xl opacity-20 group-hover:opacity-40 transition-opacity"></div>
+            <h3 class="text-slate-400 text-sm font-semibold mb-2 relative z-10">🔌 ترانک‌ها</h3>
+            <div class="text-5xl font-extrabold text-white mb-4 relative z-10">{$trunk_total}</div>
+            <div class="flex gap-4 text-xs font-medium relative z-10">
+                <span class="flex items-center gap-1 text-emerald-400"><span class="w-2 h-2 rounded-full bg-emerald-400"></span> {$trunk_online} فعال</span>
+                <span class="flex items-center gap-1 text-rose-400"><span class="w-2 h-2 rounded-full bg-rose-400"></span> {$trunk_offline} قطع</span>
             </div>
         </div>
 
-        <!-- کارت تماس‌های فعال -->
-        <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 text-center hover:shadow-md transition-shadow">
-            <h3 class="text-slate-500 text-sm font-semibold mb-2">📈 تماس‌های فعال</h3>
-            <div class="text-4xl font-extrabold text-slate-800 mb-2">{$active_calls}</div>
-            <div class="text-blue-500 text-sm font-medium">{$active_channels} کانال مشغول</div>
+        <!-- تماس‌های فعال -->
+        <div class="bg-cardbg p-6 rounded-2xl shadow-lg border border-cardborder relative overflow-hidden group hover:border-purple-500/50 transition-colors">
+            <div class="absolute -top-10 -right-10 w-32 h-32 bg-purple-500 rounded-full mix-blend-multiply filter blur-3xl opacity-20 group-hover:opacity-40 transition-opacity"></div>
+            <h3 class="text-slate-400 text-sm font-semibold mb-2 relative z-10">📈 تماس‌های فعال</h3>
+            <div class="text-5xl font-extrabold text-white mb-4 relative z-10">{$active_calls}</div>
+            <div class="text-xs font-medium text-purple-300 relative z-10">{$active_channels} کانال مشغول</div>
         </div>
 
-        <!-- کارت آمار امروز -->
-        <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 text-center hover:shadow-md transition-shadow">
-            <h3 class="text-slate-500 text-sm font-semibold mb-2">📋 تماس‌های امروز</h3>
-            <div class="text-4xl font-extrabold text-slate-800 mb-2">{$cdr_total_calls}</div>
-            <div class="flex justify-center gap-3 text-sm">
-                <span class="text-emerald-500 font-medium">✓ {$cdr_answered} پاسخ</span>
-                <span class="text-rose-500 font-medium">✗ {$cdr_failed} ناموفق</span>
+        <!-- تماس‌های امروز -->
+        <div class="bg-cardbg p-6 rounded-2xl shadow-lg border border-cardborder relative overflow-hidden group hover:border-emerald-500/50 transition-colors">
+            <div class="absolute -top-10 -right-10 w-32 h-32 bg-emerald-500 rounded-full mix-blend-multiply filter blur-3xl opacity-20 group-hover:opacity-40 transition-opacity"></div>
+            <h3 class="text-slate-400 text-sm font-semibold mb-2 relative z-10">📋 تماس‌های امروز</h3>
+            <div class="text-5xl font-extrabold text-white mb-4 relative z-10">{$cdr_total_calls}</div>
+            <div class="flex gap-4 text-xs font-medium relative z-10">
+                <span class="text-emerald-400">✓ {$cdr_answered} پاسخ</span>
+                <span class="text-rose-400">✗ {$cdr_failed} ناموفق</span>
             </div>
         </div>
     </div>
 
-    <!-- بخش پایینی: ترانک‌ها و صف‌ها -->
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <!-- باکس ترانک‌ها -->
-        <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200">
-            <h3 class="text-lg font-bold text-slate-700 mb-4 border-b border-slate-100 pb-2">🔌 وضعیت ترانک‌ها</h3>
-            {if $trunks|@count > 0}
-                <ul class="space-y-3">
-                    {foreach $trunks as $t}
-                    <li class="flex justify-between items-center bg-slate-50 p-3 rounded-xl border border-slate-100">
-                        <div class="flex flex-col">
-                            <span class="font-bold text-slate-700">{$t.name}</span>
-                            <span class="text-xs text-slate-400" dir="ltr">{$t.host}</span>
-                        </div>
-                        <span class="px-3 py-1 rounded-full text-xs font-bold {if $t.status == 'OK'}bg-emerald-100 text-emerald-700{else}bg-rose-100 text-rose-700{/if}">
-                            {$t.status}
-                        </span>
-                    </li>
-                    {/foreach}
-                </ul>
-            {else}
-                <div class="text-center py-8 text-slate-400 text-sm">ترانکی یافت نشد.</div>
-            {/if}
-        </div>
-
-        <!-- باکس صف‌ها -->
-        <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200">
-            <h3 class="text-lg font-bold text-slate-700 mb-4 border-b border-slate-100 pb-2">🎧 وضعیت صف‌ها</h3>
-            <ul class="space-y-3">
-                <li class="flex justify-between items-center p-3 border-b border-slate-100">
-                    <span class="text-slate-600">کل صف‌ها</span>
-                    <span class="font-bold text-slate-800 text-lg">{$queue_total}</span>
-                </li>
-                <li class="flex justify-between items-center p-3 border-b border-slate-100">
-                    <span class="text-slate-600">اپراتورهای فعال</span>
-                    <span class="font-bold text-emerald-500 text-lg">{$queue_members}</span>
-                </li>
-                <li class="flex justify-between items-center p-3 border-b border-slate-100">
-                    <span class="text-slate-600">تماس‌های در انتظار</span>
-                    <span class="font-bold text-rose-500 text-lg">{$queue_waiting}</span>
-                </li>
-                <li class="flex justify-between items-center p-3 bg-blue-50 rounded-xl mt-4">
-                    <span class="text-blue-700 font-medium">میانگین زمان مکالمه امروز</span>
-                    <span class="font-bold text-blue-700 text-lg">{$cdr_avg_duration} <span class="text-xs">ثانیه</span></span>
-                </li>
-            </ul>
-        </div>
-    </div>
-
-    <!-- بخش جدید: نمودارها و آمار پیشرفته -->
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mt-6">
-        <!-- نمودار ترافیک تماس -->
-        <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 lg:col-span-2">
-            <h3 class="text-lg font-bold text-slate-700 mb-4 border-b border-slate-100 pb-2">📈 ترافیک تماس‌های امروز (ساعتی)</h3>
+    <!-- بخش نمودارها -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
+        <!-- نمودار ترافیک -->
+        <div class="bg-cardbg p-6 rounded-2xl shadow-lg border border-cardborder lg:col-span-2">
+            <h3 class="text-lg font-bold text-white mb-4 border-b border-slate-700 pb-2">📈 ترافیک تماس‌های امروز (ساعتی)</h3>
             <div class="relative h-64">
                 <canvas id="trafficChart"></canvas>
             </div>
         </div>
 
-        <!-- نمودار دایره‌ای موفق/ناموفق -->
-        <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200">
-            <h3 class="text-lg font-bold text-slate-700 mb-4 border-b border-slate-100 pb-2">🥧 نسبت تماس‌ها</h3>
+        <!-- نمودار دایره‌ای -->
+        <div class="bg-cardbg p-6 rounded-2xl shadow-lg border border-cardborder">
+            <h3 class="text-lg font-bold text-white mb-4 border-b border-slate-700 pb-2">🥧 نسبت تماس‌ها</h3>
             <div class="relative h-64 flex justify-center">
                 <canvas id="pieChart"></canvas>
             </div>
         </div>
     </div>
 
-    <!-- پرتماس‌ترین داخلی‌ها -->
-    <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 mt-6">
-        <h3 class="text-lg font-bold text-slate-700 mb-4 border-b border-slate-100 pb-2">🏆 ۵ داخلی پرتماس امروز</h3>
-        {if $top_extensions|@count > 0}
-            <div class="overflow-x-auto">
-                <table class="w-full text-sm text-right text-slate-600">
-                    <thead class="text-xs text-slate-400 uppercase bg-slate-50">
-                        <tr>
-                            <th class="px-4 py-3 rounded-r-lg">داخلی</th>
-                            <th class="px-4 py-3">تعداد تماس</th>
-                            <th class="px-4 py-3 rounded-l-lg">مدت مکالمه (کل)</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {foreach $top_extensions as $ext}
-                        <tr class="border-b border-slate-100 hover:bg-slate-50">
-                            <td class="px-4 py-3 font-bold text-slate-800">{$ext.ext}</td>
-                            <td class="px-4 py-3 text-blue-500 font-medium">{$ext.call_count} تماس</td>
-                            <td class="px-4 py-3" dir="ltr">{math equation="floor(x/60)" x=$ext.talk_time} دقیقه و {math equation="x%60" x=$ext.talk_time} ثانیه</td>
-                        </tr>
-                        {/foreach}
-                    </tbody>
-                </table>
-            </div>
-        {else}
-            <div class="text-center py-4 text-slate-400 text-sm">امروز هنوز تماسی از داخلی‌ها ثبت نشده است.</div>
-        {/if}
+    <!-- بخش جدول داخلی‌ها و صف‌ها -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <!-- ۵ داخلی پرتماس -->
+        <div class="bg-cardbg p-6 rounded-2xl shadow-lg border border-cardborder">
+            <h3 class="text-lg font-bold text-white mb-4 border-b border-slate-700 pb-2">🏆 ۵ داخلی پرتماس امروز</h3>
+            {if $top_extensions|@count > 0}
+                <div class="overflow-x-auto">
+                    <table class="w-full text-sm text-right text-slate-300">
+                        <thead class="text-xs text-slate-400 uppercase bg-slate-800/50">
+                            <tr>
+                                <th class="px-4 py-3 rounded-r-lg">داخلی</th>
+                                <th class="px-4 py-3">تعداد تماس</th>
+                                <th class="px-4 py-3 rounded-l-lg">مدت مکالمه</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {foreach $top_extensions as $ext}
+                            <tr class="border-b border-slate-700/50 hover:bg-slate-800/50 transition-colors">
+                                <td class="px-4 py-3 font-bold text-blue-400 font-mono">{$ext.ext}</td>
+                                <td class="px-4 py-3 text-emerald-400 font-medium">{$ext.call_count} تماس</td>
+                                <td class="px-4 py-3 text-slate-400 font-mono" dir="ltr">{math equation="floor(x/60)" x=$ext.talk_time}:{math equation="x%60" x=$ext.talk_time}</td>
+                            </tr>
+                            {/foreach}
+                        </tbody>
+                    </table>
+                </div>
+            {else}
+                <div class="text-center py-8 text-slate-500 text-sm">امروز هنوز تماسی از داخلی‌ها ثبت نشده است.</div>
+            {/if}
+        </div>
+
+        <!-- وضعیت صف‌ها -->
+        <div class="bg-cardbg p-6 rounded-2xl shadow-lg border border-cardborder">
+            <h3 class="text-lg font-bold text-white mb-4 border-b border-slate-700 pb-2">🎧 وضعیت صف‌ها</h3>
+            <ul class="space-y-3">
+                <li class="flex justify-between items-center bg-slate-800/50 p-4 rounded-xl border border-slate-700">
+                    <span class="text-slate-300 font-medium">کل صف‌ها</span>
+                    <span class="font-bold text-blue-400 text-xl font-mono">{$queue_total}</span>
+                </li>
+                <li class="flex justify-between items-center bg-slate-800/50 p-4 rounded-xl border border-slate-700">
+                    <span class="text-slate-300 font-medium">اپراتورهای فعال</span>
+                    <span class="font-bold text-emerald-400 text-xl font-mono">{$queue_members}</span>
+                </li>
+                <li class="flex justify-between items-center bg-slate-800/50 p-4 rounded-xl border border-slate-700">
+                    <span class="text-slate-300 font-medium">تماس‌های در انتظار</span>
+                    <span class="font-bold text-rose-400 text-xl font-mono">{$queue_waiting}</span>
+                </li>
+                <li class="flex justify-between items-center bg-gradient-to-l from-blue-900/40 to-slate-800/50 p-4 rounded-xl border border-blue-500/30 mt-4">
+                    <span class="text-blue-300 font-medium">میانگین زمان مکالمه امروز</span>
+                    <span class="font-bold text-white text-xl font-mono">{$cdr_avg_duration} <span class="text-xs font-normal text-blue-300">ثانیه</span></span>
+                </li>
+            </ul>
+        </div>
     </div>
 
     <!-- اسکریپت‌های رسم نمودار -->
@@ -179,14 +173,17 @@
         var inboundData = [];
         var outboundData = [];
 
-        // ساخت لیبل ساعت‌ها و جدا کردن داده‌های ورودی/خروجی
         for (var i = 0; i < 24; i++) {
             labels.push(i.toString().padStart(2, '0') + ":00");
             inboundData.push(trafficData[i].inbound);
             outboundData.push(trafficData[i].outbound);
         }
 
-        // رسم نمودار ترافیک (ستونی)
+        // تنظیمات مشترک Chart.js برای تم تیره
+        Chart.defaults.color = '#94a3b8'; 
+        Chart.defaults.borderColor = '#334155';
+
+        // نمودار ترافیک (ستونی)
         var ctxTraffic = document.getElementById('trafficChart').getContext('2d');
         new Chart(ctxTraffic, {
             type: 'bar',
@@ -201,14 +198,14 @@
                 responsive: true,
                 maintainAspectRatio: false,
                 scales: {
-                    y: { beginAtZero: true, ticks: { stepSize: 1, precision: 0 } },
+                    y: { beginAtZero: true, ticks: { stepSize: 1, precision: 0 }, grid: { color: '#1e293b' } },
                     x: { grid: { display: false } }
                 },
                 plugins: { legend: { position: 'top', labels: { font: { family: 'Vazirmatn' } } } }
             }
         });
 
-        // رسم نمودار دایره‌ای (موفق/ناموفق)
+        // نمودار دایره‌ای (موفق/ناموفق)
         var ctxPie = document.getElementById('pieChart').getContext('2d');
         new Chart(ctxPie, {
             type: 'doughnut',
@@ -225,7 +222,7 @@
                 responsive: true,
                 maintainAspectRatio: false,
                 plugins: { legend: { position: 'bottom', labels: { font: { family: 'Vazirmatn' } } } },
-                cutout: '65%'
+                cutout: '70%'
             }
         });
     });
