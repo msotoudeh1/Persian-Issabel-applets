@@ -25,7 +25,6 @@ class Applet_IssabelStats
         $queue_data = $this->getQueueStatus();
         $channel_data = $this->getActiveChannels();
         
-        // دریافت آمار برای هر سه دوره (روز، ماه، سال)
         $cdr_day = $this->getCDRStats('day');
         $cdr_month = $this->getCDRStats('month');
         $cdr_year = $this->getCDRStats('year');
@@ -38,11 +37,15 @@ class Applet_IssabelStats
         $top_month = $this->getTopExtensions('month');
         $top_year = $this->getTopExtensions('year');
 
-        // بسته‌بندی داده‌ها برای ارسال به جاوااسکریپت
+        // دریافت تماس‌های اخیر برای هر سه دوره
+        $recent_day = $this->getRecentCalls('day');
+        $recent_month = $this->getRecentCalls('month');
+        $recent_year = $this->getRecentCalls('year');
+
         $period_data = array(
-            'day' => array('stats' => $cdr_day, 'traffic' => $traffic_day, 'top' => $top_day),
-            'month' => array('stats' => $cdr_month, 'traffic' => $traffic_month, 'top' => $top_month),
-            'year' => array('stats' => $cdr_year, 'traffic' => $traffic_year, 'top' => $top_year)
+            'day' => array('stats' => $cdr_day, 'traffic' => $traffic_day, 'top' => $top_day, 'recent' => $recent_day),
+            'month' => array('stats' => $cdr_month, 'traffic' => $traffic_month, 'top' => $top_month, 'recent' => $recent_month),
+            'year' => array('stats' => $cdr_year, 'traffic' => $traffic_year, 'top' => $top_year, 'recent' => $recent_year)
         );
 
         $ext_total = count($peers_data['extensions']);
@@ -73,16 +76,40 @@ class Applet_IssabelStats
             'queue_waiting' => $queue_data['waiting'],
             'active_calls' => $channel_data['calls'],
             'active_channels' => $channel_data['channels'],
-            
-            // داده‌های پیش‌فرض (امروز) برای نمایش در خلاصه
             'cdr_total_calls' => $cdr_day['total'],
             'cdr_answered' => $cdr_day['answered'],
             'cdr_failed' => $cdr_day['failed'],
             'cdr_avg_duration' => $cdr_day['avg_duration'],
-            
-            // دیتای کامل سه دوره به صورت JSON برای استفاده در مودال
             'period_data_json' => json_encode($period_data, JSON_UNESCAPED_UNICODE)
         );
+    }
+
+    // --- تابع جدید برای دریافت ۱۰ تماس اخیر ورودی و خروجی ---
+    private function getRecentCalls($period) {
+        $calls = array();
+        try {
+            $pdo = new PDO('mysql:host=localhost;dbname=asteriskcdrdb;charset=utf8', 'asteriskuser', '123tosan8661');
+            
+            $where = "DATE(calldate) = CURDATE()";
+            if ($period == 'month') $where = "MONTH(calldate) = MONTH(CURDATE()) AND YEAR(calldate) = YEAR(CURDATE())";
+            if ($period == 'year') $where = "YEAR(calldate) = YEAR(CURDATE())";
+
+            // شرط فیلتر: فقط تماس‌های داخلی، ورودی از ترانک یا IVR
+            $sql = "SELECT calldate, src, dst, dcontext, disposition, billsec 
+                    FROM cdr 
+                    WHERE $where 
+                    AND (dcontext LIKE 'from-internal%' OR dcontext LIKE 'from-did%' OR dcontext LIKE 'ivr-%' OR dcontext LIKE 'from-trunk%' OR dcontext LIKE 'from-pstn%')
+                    ORDER BY calldate DESC LIMIT 100";
+                    
+            $stmt = $pdo->query($sql);
+            while($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+                // تشخیص جهت تماس بر اساس کانتکست
+                $is_inbound = (stripos($row['dcontext'], 'from-internal') === false);
+                $row['direction'] = $is_inbound ? 'inbound' : 'outbound';
+                $calls[] = $row;
+            }
+        } catch (PDOException $e) {}
+        return $calls;
     }
 
     private function getSipPeers() {
@@ -168,7 +195,6 @@ class Applet_IssabelStats
         return array('calls' => $calls, 'channels' => $channels);
     }
 
-    // تابع اصلاح شده برای دریافت آمار بر اساس دوره
     private function getCDRStats($period) {
         $stats = array('total' => 0, 'answered' => 0, 'failed' => 0, 'avg_duration' => 0);
         try {
@@ -197,7 +223,6 @@ class Applet_IssabelStats
         return $stats;
     }
 
-    // تابع اصلاح شده برای نمودار
     private function getTrafficChartData($period) {
         if ($period == 'day') $data = array_fill(0, 24, array('inbound' => 0, 'outbound' => 0));
         elseif ($period == 'month') $data = array_fill(0, 31, array('inbound' => 0, 'outbound' => 0));
@@ -238,7 +263,6 @@ class Applet_IssabelStats
         return $data;
     }
 
-    // تابع اصلاح شده برای جدول
     private function getTopExtensions($period) {
         $top = array();
         try {
