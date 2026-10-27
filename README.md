@@ -1,6 +1,6 @@
 <img width="1302" height="394" alt="image" src="https://github.com/user-attachments/assets/0901aa5f-af14-4d61-9b15-cf79b83bda49" />
 
-
+<img width="1360" height="1664" alt="photo" src="https://github.com/user-attachments/assets/a421e59a-bcd3-402b-802c-9b0f629c9827" />
 
 درود . 
 
@@ -72,8 +72,6 @@ ORDER BY calldate DESC LIMIT 100";
 
 <img width="487" height="163" alt="image" src="https://github.com/user-attachments/assets/ada68904-6ca7-4808-b1ea-03e31f0c9db0" />
 
-
-<img width="1360" height="1664" alt="photo" src="https://github.com/user-attachments/assets/a421e59a-bcd3-402b-802c-9b0f629c9827" />
 
 
 
