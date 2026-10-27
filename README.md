@@ -56,13 +56,13 @@ rm -rf /var/www/html/var/templates_c/*
 
 نمایش امار بر مبنای روز و ماه و سال
 
-<img width="1246" height="520" alt="image" src="https://github.com/user-attachments/assets/9e369e40-afcf-4e67-b1cb-cdf4bd3f197f" />
+
 
 <img width="487" height="163" alt="image" src="https://github.com/user-attachments/assets/ada68904-6ca7-4808-b1ea-03e31f0c9db0" />
 
 <img width="973" height="315" alt="image" src="https://github.com/user-attachments/assets/674dadd0-9b7b-4e95-8aba-a7f5c9c778c9" />
 
-<img width="1335" height="577" alt="sshot-257" src="https://github.com/user-attachments/assets/0ba3fd33-ddc4-410f-ae15-dda215b27c6b" />
+<img width="1246" height="520" alt="image" src="https://github.com/user-attachments/assets/9e369e40-afcf-4e67-b1cb-cdf4bd3f197f" />
 
 <img width="1301" height="402" alt="sshot-258" src="https://github.com/user-attachments/assets/0c418a39-f4ed-4ced-a77c-09555bf6fcfe" />
 
