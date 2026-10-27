@@ -1,3 +1,6 @@
+<img width="1332" height="389" alt="image" src="https://github.com/user-attachments/assets/b15891ee-be56-4e34-8e0d-2952bd8595fb" />
+
+
 درود . 
 
 نسخه جدید جهت استفاده آپلود شد . تغییر تم به همراه افزودن قابلیت انتخاب امار بر مبنای روز و ماه و سال
@@ -68,7 +71,6 @@ ORDER BY calldate DESC LIMIT 100";
 
 <img width="487" height="163" alt="image" src="https://github.com/user-attachments/assets/ada68904-6ca7-4808-b1ea-03e31f0c9db0" />
 
-<img width="1332" height="389" alt="image" src="https://github.com/user-attachments/assets/ed9527a6-4d48-44a2-92f7-943b765b6aba" />
 
 <img width="1360" height="1664" alt="photo" src="https://github.com/user-attachments/assets/a421e59a-bcd3-402b-802c-9b0f629c9827" />
 
