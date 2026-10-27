@@ -38,8 +38,9 @@ rm -rf /var/www/html/var/templates_c/*
 
 <img width="973" height="315" alt="image" src="https://github.com/user-attachments/assets/674dadd0-9b7b-4e95-8aba-a7f5c9c778c9" />
 
-<img width="1592" height="698" alt="image" src="https://github.com/user-attachments/assets/932e13d8-a71e-4034-93f9-3b7c2869ab4d" />
+<img width="1335" height="577" alt="sshot-257" src="https://github.com/user-attachments/assets/0ba3fd33-ddc4-410f-ae15-dda215b27c6b" />
 
-<img width="1117" height="503" alt="Screenshot 2026-10-26 163238" src="https://github.com/user-attachments/assets/7c73a03c-b3a7-4a81-8764-4358eaa4271e" />
+<img width="1301" height="402" alt="sshot-258" src="https://github.com/user-attachments/assets/0c418a39-f4ed-4ced-a77c-09555bf6fcfe" />
+
 
 
