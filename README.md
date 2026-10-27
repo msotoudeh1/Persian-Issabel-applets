@@ -9,8 +9,11 @@
 /var/www/html
 
 3- سپس در محیط کنسول ایزابل دستورات زیر به به ترتیب وارد کنید :
+1-
 
 chown -R asterisk:asterisk /var/www/html/modules/dashboard/applets/IssabelStats/
+
+2-
 
 chmod -R 755 /var/www/html/modules/dashboard/applets/IssabelStats/
 
