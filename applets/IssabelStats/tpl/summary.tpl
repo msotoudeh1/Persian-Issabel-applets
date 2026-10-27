@@ -1,4 +1,3 @@
-
 <link href="Vazirmatn-font-face.css" rel="stylesheet" type="text/css" />
 <script src="3.4.17.js"></script>
 <script>tailwind.config = { theme: { extend: { fontFamily: { vazir: ['Vazirmatn', 'sans-serif'] } } } }</script>
@@ -9,7 +8,6 @@
         
         <!-- بخش بالایی: آمار داخلی و ترانک (پس‌زمینه روشن) -->
         <div class="flex-1 bg-slate-50 flex justify-around items-center p-2 border-b border-gray-200 relative">
-            <!-- افکت پس‌زمینه -->
             <div class="absolute -top-6 -left-6 w-16 h-16 bg-blue-100 rounded-full mix-blend-multiply filter blur-xl opacity-70"></div>
             
             <!-- ستون داخلی‌ها -->
@@ -40,22 +38,24 @@
         </div>
 
         <!-- بخش پایینی: آمار تماس‌ها و دکمه (پس‌زمینه تیره) -->
-        <div class="flex-1 bg-gradient-to-br from-slate-800 to-slate-900 flex flex-col justify-center items-center p-3 relative">
-            <div class="text-slate-400 text-[11px] mb-1 flex items-center gap-1.5 font-medium">
-                <svg class="w-3.5 h-3.5 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
-                تماس‌های امروز
-            </div>
-            
-            <div class="flex items-center gap-4 mb-2">
-                <div class="text-2xl font-mono font-bold text-white">{$cdr_total_calls}</div>
-                <div class="flex flex-col text-[10px] border-r border-slate-600 pr-3">
-                    <span class="text-emerald-400">✓ {$cdr_answered} پاسخ</span>
-                    <span class="text-rose-400">✗ {$cdr_failed} ناموفق</span>
+        <div class="flex-1 bg-gradient-to-br from-slate-800 to-slate-900 flex flex-col justify-between items-center p-3 relative">
+            <div class="w-full text-center mt-1">
+                <div class="text-slate-400 text-[11px] mb-1 flex items-center justify-center gap-1.5 font-medium">
+                    <svg class="w-3.5 h-3.5 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
+                    تماس‌های امروز
+                </div>
+                <div class="flex items-center justify-center gap-3 mb-2">
+                    <div class="text-2xl text-white font-bold">{$cdr_total_calls}</div>
+                    <div class="flex flex-col text-[10px] border-r border-slate-600 pr-3 text-right">
+                        <span class="text-emerald-400">✓ {$cdr_answered} پاسخ</span>
+                        <span class="text-rose-400">✗ {$cdr_failed} ناموفق</span>
+                    </div>
                 </div>
             </div>
 
-            <!-- دکمه مودال -->
-            <button onclick="openFullStatsModal()" class="w-full bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold py-1.5 px-4 rounded-lg transition-all border border-blue-400/30 flex items-center justify-center gap-1">
+            <!-- دکمه باز کردن مودال (استایل خطی برای عدم تداخل با CSS ایزابل) -->
+            <button onclick="openFullStatsModal()" style="width: 100%; padding: 8px 0; background-color: #3b82f6; color: white; border: none; border-radius: 8px; font-family: inherit; font-size: 12px; font-weight: bold; cursor: pointer; transition: background-color 0.2s; display: flex; align-items: center; justify-content: center; gap: 6px;" onmouseover="this.style.backgroundColor='#2563eb'" onmouseout="this.style.backgroundColor='#3b82f6'">
+                <svg style="width: 14px; height: 14px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"></path></svg>
                 مشاهده داشبورد جامع
             </button>
         </div>
