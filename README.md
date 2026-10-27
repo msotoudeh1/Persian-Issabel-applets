@@ -62,11 +62,8 @@ rm -rf /var/www/html/var/templates_c/*
 
 <img width="487" height="163" alt="image" src="https://github.com/user-attachments/assets/ada68904-6ca7-4808-b1ea-03e31f0c9db0" />
 
-<img width="973" height="315" alt="image" src="https://github.com/user-attachments/assets/674dadd0-9b7b-4e95-8aba-a7f5c9c778c9" />
+<img width="1360" height="1664" alt="photo" src="https://github.com/user-attachments/assets/a421e59a-bcd3-402b-802c-9b0f629c9827" />
 
-<img width="1246" height="520" alt="image" src="https://github.com/user-attachments/assets/9e369e40-afcf-4e67-b1cb-cdf4bd3f197f" />
-
-<img width="1301" height="402" alt="sshot-258" src="https://github.com/user-attachments/assets/0c418a39-f4ed-4ced-a77c-09555bf6fcfe" />
 
 
 
