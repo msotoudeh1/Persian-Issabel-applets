@@ -3,22 +3,30 @@ class Applet_IssabelClock
 {
     function handleJSON_getContent($smarty, $module_name, $appletlist)
     {
-        // محاسبه تاریخ شمسی
-        $smarty->assign('date_jalali', $this->getJalaliDate());
+        // محاسبه تاریخ شمسی با فرمت جدید
+        $smarty->assign('date_jalali', $this->getJalaliDateFormatted());
         
         // رندر قالب
         $html = $smarty->fetch('file:' . dirname(__FILE__) . '/tpl/clock.tpl');
 
         header('Content-Type: application/json');
-        return json_encode(array(
+        
+        // استفاده از JSON_UNESCAPED_UNICODE برای جلوگیری از خطای کاراکترهای فارسی
+        $response = json_encode(array(
             'status' => 'success',
             'message' => '(no message)',
             'html' => $html
-        ));
+        ), JSON_UNESCAPED_UNICODE);
+
+        if ($response === false) {
+            return json_encode(array('status' => 'error', 'message' => 'JSON Error: ' . json_last_error_msg()));
+        }
+        
+        return $response;
     }
 
-    // تابع تبدیل تاریخ میلادی به شمسی
-    private function getJalaliDate() {
+    // تابع تبدیل تاریخ میلادی به شمسی با نام روز و ماه
+    private function getJalaliDateFormatted() {
         $gy = date('Y'); $gm = date('m'); $gd = date('d');
         $g_d_m = array(0,31,59,90,120,151,181,212,243,273,304,334);
         if($gy > 1600){ $jy=979; $gy-=1600; }else{ $jy=0; $gy-=621; }
@@ -28,6 +36,24 @@ class Applet_IssabelClock
         $jy += 4 * ((int)($days / 1461)); $days %= 1461;
         if($days > 365){ $jy += (int)(($days - 1) / 365); $days = ($days - 1) % 365; }
         if($days < 186){ $jm = 1 + (int)($days / 31); $jd = 1 + ($days % 31); }else{ $jm = 7 + (int)(($days - 186) / 30); $jd = 1 + (($days - 186) % 30); }
-        return "$jy/$jm/$jd";
+
+        // تعریف ایمن آرایه ماه‌ها با ایندکس عددی
+        $months = array(
+            1 => "فروردین", 2 => "اردیبهشت", 3 => "خرداد", 
+            4 => "تیر", 5 => "مرداد", 6 => "شهریور", 
+            7 => "مهر", 8 => "آبان", 9 => "آذر", 
+            10 => "دی", 11 => "بهمن", 12 => "اسفند"
+        );
+        $month_name = isset($months[$jm]) ? $months[$jm] : '';
+
+        // تعریف ایمن روزهای هفته
+        $day_of_week = date('w'); 
+        $weekdays = array(
+            0 => "یکشنبه", 1 => "دوشنبه", 2 => "سه‌شنبه", 
+            3 => "چهارشنبه", 4 => "پنجشنبه", 5 => "جمعه", 6 => "شنبه"
+        );
+        $weekday_name = isset($weekdays[$day_of_week]) ? $weekdays[$day_of_week] : '';
+
+        return "امروز {$weekday_name} ، {$jd} {$month_name} {$jy}";
     }
 }
