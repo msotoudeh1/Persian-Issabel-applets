@@ -1,13 +1,17 @@
 درود . 
 
-1- به مسیر /var/www/html/modules/dashboard/applets/
+1- به مسیر زیر
+```
+ /var/www/html/modules/dashboard/applets/
+```
+ 
 
 در ایزابل رفته دو پوشه IssabelClock و  IssabelStats به طور کامل به پوشه applets منتقل کنید .
 
 2- تمام محتویات موجود در پوشه file رابه پوشه html در ایزابل منتقل کنید :
-
+```
 /var/www/html
-
+```
 3- سپس در محیط کنسول ایزابل دستورات زیر به به ترتیب وارد کنید :
 ```
 chown -R asterisk:asterisk /var/www/html/modules/dashboard/applets/IssabelStats/
@@ -16,21 +20,27 @@ chown -R asterisk:asterisk /var/www/html/modules/dashboard/applets/IssabelStats/
 ```
 chmod -R 755 /var/www/html/modules/dashboard/applets/IssabelStats/
 ```
+
 ```
 sqlite3 /var/www/db/dashboard.db "INSERT INTO applet (code, name, icon) VALUES ('Applet_IssabelStats', 'آمار داخلی و ترانک', 'stats.png');"
 ```
+
 ```
 sqlite3 /var/www/db/dashboard.db "INSERT INTO default_applet_by_user (id_applet, username) SELECT id, 'admin' FROM applet WHERE code='Applet_IssabelStats';"
 ```
+
 ```
 chown -R asterisk:asterisk /var/www/html/modules/dashboard/applets/IssabelClock/
 ```
+
 ```
 chmod -R 755 /var/www/html/modules/dashboard/applets/IssabelClock/
 ```
+
 ```
 sqlite3 /var/www/db/dashboard.db "INSERT INTO applet (code, name, icon) VALUES ('Applet_IssabelClock', 'تاریخ و ساعت', 'clock.png');"
 ```
+
 ```
 sqlite3 /var/www/db/dashboard.db "INSERT INTO default_applet_by_user (id_applet, username) SELECT id, 'admin' FROM applet WHERE code='Applet_IssabelClock';"
 ```
