@@ -88,7 +88,7 @@ class Applet_IssabelStats
     private function getRecentCalls($period) {
         $calls = array();
         try {
-            $pdo = new PDO('mysql:host=localhost;dbname=asteriskcdrdb;charset=utf8', 'asteriskuser', '123tosan8661');
+            $pdo = new PDO('mysql:host=localhost;dbname=asteriskcdrdb;charset=utf8', 'asteriskuser', 'database_password');
             
             $where = "DATE(calldate) = CURDATE()";
             if ($period == 'month') $where = "MONTH(calldate) = MONTH(CURDATE()) AND YEAR(calldate) = YEAR(CURDATE())";
