@@ -19,7 +19,10 @@
 ```
 /var/www/html
 ```
-3- سپس در محیط کنسول ایزابل دستورات زیر به به ترتیب وارد کنید :
+
+3- درپوشه IssabelStats فایل index.php را باز کرده و به جای database_password رمز دیتابیس خود را قرار دهید .
+
+4- سپس در محیط کنسول ایزابل دستورات زیر به به ترتیب وارد کنید :
 
 ```
 chown -R asterisk:asterisk /var/www/html/modules/dashboard/applets/IssabelStats/
